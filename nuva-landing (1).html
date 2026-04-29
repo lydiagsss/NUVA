@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUVA — Tu outfit perfecto en segundos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black:       #0a0a0a;
+      --black-soft:  #141414;
+      --black-card:  #1c1c1c;
+      --beige:       #c8a882;
+      --beige-light: #dfc4a4;
+      --cream:       #f0ebe1;
+      --sand:        #b89470;
+      --grey-dim:    #555;
+      --grey:        #999;
+      --grey-line:   #2e2e2e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+    }
+
+    /* UTILS */
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--beige);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
+    }
+    .section-label::before {
+      content: '';
+      width: 28px; height: 1px;
+      background: var(--beige);
+      flex-shrink: 0;
+    }
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.12;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 28px;
+    }
+    .section-heading em { font-style: italic; color: var(--beige); }
+    .section-body {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #bbb;
+      margin-bottom: 20px;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 56px;
+      background: rgba(10,10,10,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--grey-line);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      color: var(--cream);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888;
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--beige); }
+    .nav-cta {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--beige);
+      padding: 11px 24px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: var(--beige-light); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 56% 44%;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 150px 56px 90px 56px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--beige);
+      margin-bottom: 28px;
+      font-weight: 600;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(54px, 6.5vw, 94px);
+      line-height: 1.02;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--beige); }
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 400;
+      color: var(--sand);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s forwards;
+    }
+    .hero-desc {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #aaa;
+      max-width: 400px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.65s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+    }
+    .btn-primary {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--black); background: var(--beige); padding: 16px 36px;
+      text-decoration: none; font-weight: 700;
+      transition: background 0.3s, transform 0.2s; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--beige-light); transform: translateY(-1px); }
+    .btn-ghost {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #aaa; background: transparent; padding: 16px 0;
+      text-decoration: none; font-weight: 500;
+      border-bottom: 1px solid #333;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--beige); border-color: var(--beige); }
+    .hero-right {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #111 0%, #1e1a16 50%, #111 100%);
+    }
+    .hero-overlay-l {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--black) 0%, transparent 28%);
+      z-index: 2;
+    }
+    .hero-art-svg {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.1;
+    }
+    .hero-quote-block {
+      position: absolute; bottom: 52px; left: 40px; right: 40px;
+      z-index: 3; border-top: 1px solid rgba(200,168,130,0.2); padding-top: 18px;
+    }
+    .hero-quote-block p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-size: 14px;
+      color: rgba(200,168,130,0.55); line-height: 1.6;
+    }
+    .hero-vertical {
+      position: absolute; right: 24px; top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+      color: #3a3a3a; white-space: nowrap; z-index: 3;
+    }
+    .scroll-cue {
+      position: absolute; bottom: 40px; left: 56px;
+      display: flex; align-items: center; gap: 14px;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #555; z-index: 3;
+      opacity: 0; animation: fadeUp 0.7s 1.1s forwards;
+    }
+    .scroll-line { width: 42px; height: 1px; background: #2a2a2a; overflow: hidden; position: relative; }
+    .scroll-line::after {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%; background: var(--beige);
+      animation: lineSlide 2.2s 1.5s ease-in-out infinite;
+    }
+
+    /* MARQUEE */
+    .marquee-section {
+      border-top: 1px solid var(--grey-line); border-bottom: 1px solid var(--grey-line);
+      padding: 17px 0; overflow: hidden; background: var(--black-soft);
+    }
+    .marquee-track { display: flex; animation: marquee 22s linear infinite; width: max-content; }
+    .marquee-item {
+      display: flex; align-items: center; gap: 28px;
+      padding: 0 44px; font-size: 11px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: #666; white-space: nowrap; font-weight: 500;
+    }
+    .m-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--beige); flex-shrink: 0; }
+
+    /* SECTION: QUÉ ES */
+    .sec-que-es {
+      padding: 112px 56px; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 88px;
+      align-items: start; max-width: 1340px; margin: 0 auto;
+    }
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; margin-top: 40px;
+      background: var(--grey-line); border: 1px solid var(--grey-line);
+    }
+    .fp { background: var(--black-soft); padding: 22px 20px; transition: background 0.3s; }
+    .fp:hover { background: var(--black-card); }
+    .fp-icon { font-size: 18px; margin-bottom: 7px; display: block; }
+    .fp-title { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream); margin-bottom: 4px; font-weight: 600; }
+    .fp-desc { font-size: 12px; color: #888; line-height: 1.65; }
+
+    .statement-block { position: relative; padding-top: 16px; }
+    .ghost-text {
+      font-family: 'Playfair Display', serif; font-size: 140px; font-weight: 700;
+      color: transparent; -webkit-text-stroke: 1px rgba(200,168,130,0.05);
+      line-height: 1; position: absolute; top: -20px; right: -12px;
+      user-select: none; pointer-events: none;
+    }
+    .big-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2.2vw, 28px);
+      font-style: italic; line-height: 1.45; color: var(--cream);
+      border-top: 1px solid var(--grey-line); padding-top: 32px; margin-top: 28px; position: relative; z-index: 1;
+    }
+    .big-quote span { color: var(--beige); font-style: normal; font-weight: 700; }
+    .stat-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; margin-top: 40px; border: 1px solid var(--grey-line);
+    }
+    .stat-item { padding: 26px 18px; border-right: 1px solid var(--grey-line); text-align: center; }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; color: var(--beige); display: block; margin-bottom: 5px; }
+    .stat-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #777; font-weight: 500; }
+
+    /* PROPUESTA VALOR */
+    .sec-valor {
+      background: var(--black-soft); padding: 112px 56px;
+      text-align: center; border-top: 1px solid var(--grey-line); border-bottom: 1px solid var(--grey-line);
+    }
+    .valor-big {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(38px, 5.5vw, 76px); line-height: 1.07;
+      font-weight: 700; color: var(--cream); max-width: 860px; margin: 0 auto 24px;
+    }
+    .valor-big em { font-style: italic; color: var(--beige); }
+    .diferenciador {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(17px, 2.2vw, 26px); font-style: italic;
+      color: var(--sand); max-width: 640px; margin: 28px auto 0; line-height: 1.55;
+    }
+
+    /* FUNCIONALIDADES */
+    .sec-features { padding: 112px 56px; max-width: 1340px; margin: 0 auto; }
+    .features-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; }
+    .features-header p { font-size: 14px; color: #888; max-width: 280px; line-height: 1.7; }
+    .feature-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; border: 1px solid var(--grey-line);
+    }
+    .fc {
+      padding: 40px 32px; border-right: 1px solid var(--grey-line);
+      border-bottom: 1px solid var(--grey-line); transition: background 0.3s;
+    }
+    .fc:hover { background: rgba(200,168,130,0.04); }
+    .fc:nth-child(3n) { border-right: none; }
+    .fc:nth-child(4), .fc:nth-child(5), .fc:nth-child(6) { border-bottom: none; }
+    .fc-num { font-size: 12px; color: var(--beige); letter-spacing: 0.1em; margin-bottom: 18px; display: block; font-weight: 700; }
+    .fc-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--cream); margin-bottom: 10px; line-height: 1.3; }
+    .fc-desc { font-size: 13px; line-height: 1.8; color: #999; }
+    .fc-tag {
+      display: inline-block; margin-top: 18px; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--beige);
+      border-bottom: 1px solid rgba(200,168,130,0.35); padding-bottom: 2px; font-weight: 600;
+    }
+
+    /* MERCADO */
+    .sec-mercado { background: var(--black-soft); padding: 112px 56px; border-top: 1px solid var(--grey-line); }
+    .mercado-inner { max-width: 1340px; margin: 0 auto; }
+    .mercado-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 56px; align-items: start; }
+
+    .insight-block { border: 1px solid var(--grey-line); padding: 32px 28px; background: var(--black-card); margin-bottom: 20px; }
+    .insight-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--cream); margin-bottom: 14px; }
+    .insight-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .insight-list li { font-size: 13px; color: #bbb; display: flex; gap: 12px; align-items: flex-start; line-height: 1.65; }
+    .insight-list li::before { content: '—'; color: var(--beige); flex-shrink: 0; font-weight: 700; }
+
+    .segments-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .seg-card { border: 1px solid var(--grey-line); padding: 22px 26px; background: var(--black-card); transition: border-color 0.3s; }
+    .seg-card:hover { border-color: var(--beige); }
+    .seg-emoji { font-size: 20px; margin-bottom: 8px; display: block; }
+    .seg-title { font-size: 14px; font-weight: 600; color: var(--cream); margin-bottom: 5px; }
+    .seg-desc { font-size: 12px; color: #888; line-height: 1.65; margin-bottom: 8px; }
+    .seg-need { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--beige); font-weight: 700; }
+
+    .comp-table-wrap { overflow-x: auto; margin-top: 56px; border: 1px solid var(--grey-line); }
+    .comp-table { width: 100%; border-collapse: collapse; }
+    .comp-table th {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--beige); font-weight: 700; padding: 15px 18px;
+      text-align: left; border-bottom: 1px solid var(--grey-line);
+      background: var(--black-card); white-space: nowrap;
+    }
+    .comp-table td {
+      font-size: 13px; color: #ccc; padding: 13px 18px;
+      border-bottom: 1px solid var(--grey-line); border-right: 1px solid var(--grey-line);
+    }
+    .comp-table td:last-child { border-right: none; }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(200,168,130,0.03); }
+    .nuva-row td { background: rgba(200,168,130,0.07) !important; color: var(--cream) !important; }
+    .nuva-row td:first-child { color: var(--beige) !important; font-weight: 700; }
+    .check { color: #72c47e; font-size: 14px; }
+    .cross { color: #444; font-size: 14px; }
+    .half  { color: #a08060; font-size: 14px; }
+
+    .oportunidad-box { margin-top: 36px; padding: 32px 36px; border: 1px solid rgba(200,168,130,0.25); background: rgba(200,168,130,0.05); }
+    .oportunidad-box p { font-family: 'Playfair Display', serif; font-size: clamp(15px, 2vw, 21px); font-style: italic; color: var(--cream); line-height: 1.55; }
+    .oportunidad-box span { color: var(--beige); font-style: normal; font-weight: 700; }
+
+    /* MARKETING */
+    .sec-marketing { padding: 112px 56px; max-width: 1340px; margin: 0 auto; }
+    .marketing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 56px; }
+    .mk-block { border: 1px solid var(--grey-line); padding: 32px 28px; background: var(--black-card); }
+    .mk-block-title { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--beige); font-weight: 700; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--grey-line); }
+    .mk-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .mk-list li { font-size: 13px; color: #bbb; display: flex; gap: 12px; align-items: flex-start; line-height: 1.65; }
+    .mk-list li::before { content: '→'; color: var(--beige); flex-shrink: 0; font-weight: 700; }
+    .mk-list li strong { color: var(--cream); }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--grey-line); border: 1px solid var(--grey-line); margin-top: 40px; }
+    .kpi-item { background: var(--black-card); padding: 18px 20px; }
+    .kpi-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--beige); margin-bottom: 5px; font-weight: 700; }
+    .kpi-value { font-size: 13px; color: #bbb; line-height: 1.5; }
+
+    /* FINANCIERO */
+    .sec-financiero { background: var(--black-soft); padding: 112px 56px; border-top: 1px solid var(--grey-line); }
+    .financiero-inner { max-width: 1340px; margin: 0 auto; }
+    .fin-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; margin-top: 56px; }
+
+    .rev-streams { display: flex; flex-direction: column; gap: 18px; }
+    .rev-card { border: 1px solid var(--grey-line); padding: 28px 24px; background: var(--black-card); position: relative; overflow: hidden; transition: border-color 0.3s; }
+    .rev-card:hover { border-color: var(--beige); }
+    .rev-num {
+      position: absolute; top: 14px; right: 18px;
+      font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 700;
+      color: transparent; -webkit-text-stroke: 1px rgba(200,168,130,0.06); line-height: 1;
+    }
+    .rev-badge {
+      display: inline-block; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--black); background: var(--beige); padding: 4px 11px; margin-bottom: 12px; font-weight: 700;
+    }
+    .rev-badge.alt { background: transparent; color: var(--beige); border: 1px solid var(--beige); }
+    .rev-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: var(--cream); margin-bottom: 8px; }
+    .rev-desc { font-size: 13px; color: #999; line-height: 1.7; margin-bottom: 12px; }
+    .rev-highlight { font-size: 13px; color: var(--cream); background: rgba(200,168,130,0.1); padding: 9px 13px; border-left: 2px solid var(--beige); font-weight: 500; }
+
+    .fin-table-wrap { }
+    .fin-table-title { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 600; color: var(--cream); margin-bottom: 20px; }
+    .fin-table { width: 100%; border-collapse: collapse; border: 1px solid var(--grey-line); }
+    .fin-table th { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--beige); font-weight: 700; padding: 15px 20px; text-align: left; border-bottom: 1px solid var(--grey-line); background: var(--black-card); }
+    .fin-table td { font-size: 14px; color: #ccc; padding: 15px 20px; border-bottom: 1px solid var(--grey-line); border-right: 1px solid var(--grey-line); line-height: 1.5; }
+    .fin-table td:last-child { border-right: none; text-align: right; }
+    .fin-table tr:last-child td { border-bottom: none; background: rgba(200,168,130,0.1); color: var(--cream); font-weight: 700; }
+    .fin-table tr:last-child td:last-child { color: var(--beige); font-size: 18px; }
+
+    .escalado-box { margin-top: 28px; padding: 28px 32px; border: 1px solid rgba(200,168,130,0.25); background: rgba(200,168,130,0.05); display: flex; gap: 40px; align-items: center; flex-wrap: wrap; }
+    .esc-metric { text-align: center; }
+    .esc-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; color: var(--beige); display: block; }
+    .esc-lbl { font-size: 11px; color: #888; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+    .esc-note { font-size: 13px; color: #bbb; line-height: 1.75; max-width: 460px; }
+    .esc-note strong { color: var(--cream); }
+
+    /* ROADMAP */
+    .sec-roadmap { padding: 112px 56px; max-width: 1340px; margin: 0 auto; }
+    .roadmap-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--grey-line); margin-top: 56px; }
+    .rs { padding: 32px 24px; border-right: 1px solid var(--grey-line); transition: background 0.3s; }
+    .rs:hover { background: rgba(200,168,130,0.04); }
+    .rs:last-child { border-right: none; }
+    .rs-step { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--beige); font-weight: 700; margin-bottom: 14px; }
+    .rs-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--cream); margin-bottom: 10px; line-height: 1.3; }
+    .rs-desc { font-size: 12px; color: #888; line-height: 1.7; }
+    .rs-tag { margin-top: 14px; font-size: 10px; color: #555; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
+
+    /* QUOTE */
+    .sec-quote { padding: 96px 56px; text-align: center; border-top: 1px solid var(--grey-line); position: relative; overflow: hidden; }
+    .qbg {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif; font-size: 220px; font-weight: 700;
+      color: transparent; -webkit-text-stroke: 1px rgba(138,138,138,0.04);
+      white-space: nowrap; pointer-events: none; user-select: none;
+    }
+    .qt { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 50px); font-style: italic; line-height: 1.3; color: var(--cream); max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+    .qt strong { font-style: normal; color: var(--beige); }
+    .qt-div { width: 40px; height: 1px; background: var(--beige); margin: 32px auto 0; }
+
+    /* PERSONAS */
+    .sec-personas { padding: 0 56px 112px; max-width: 1340px; margin: 0 auto; }
+    .personas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 56px; }
+    .pcard { border: 1px solid var(--grey-line); padding: 36px 28px; transition: border-color 0.3s; background: var(--black-soft); }
+    .pcard:hover { border-color: var(--beige); }
+    .pinitial { font-family: 'Playfair Display', serif; font-size: 60px; font-weight: 700; color: transparent; -webkit-text-stroke: 1px var(--grey-line); line-height: 1; margin-bottom: 18px; transition: -webkit-text-stroke-color 0.3s; }
+    .pcard:hover .pinitial { -webkit-text-stroke-color: rgba(200,168,130,0.25); }
+    .pname { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--cream); margin-bottom: 3px; }
+    .page { font-size: 12px; color: var(--beige); letter-spacing: 0.1em; margin-bottom: 14px; font-weight: 500; }
+    .pdesc { font-size: 13px; line-height: 1.75; color: #999; margin-bottom: 18px; }
+    .ptags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ptag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #666; border: 1px solid var(--grey-line); padding: 4px 9px; font-weight: 500; }
+
+    /* MODELO */
+    .sec-modelo { background: var(--black-soft); padding: 112px 56px; border-top: 1px solid var(--grey-line); }
+    .modelo-inner { max-width: 1340px; margin: 0 auto; }
+    .modelo-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 56px; border: 1px solid var(--grey-line); }
+    .mc { padding: 48px 36px; border-right: 1px solid var(--grey-line); background: var(--black-card); }
+    .mc:last-child { border-right: none; }
+    .mc-badge { display: inline-block; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--black); background: var(--beige); padding: 4px 12px; margin-bottom: 24px; font-weight: 700; }
+    .mc-badge.alt { background: transparent; color: var(--beige); border: 1px solid var(--beige); }
+    .mc-price { font-family: 'Playfair Display', serif; font-size: 50px; font-weight: 700; color: var(--cream); line-height: 1; margin-bottom: 5px; }
+    .mc-note { font-size: 12px; color: #666; margin-bottom: 28px; }
+    .mc-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .mc-list li { font-size: 13px; color: #bbb; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6; }
+    .mc-list li::before { content: '—'; color: var(--beige); flex-shrink: 0; font-weight: 700; }
+
+    /* CONTACTO */
+    .sec-contacto { padding: 112px 56px; border-top: 1px solid var(--grey-line); display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: center; max-width: 1340px; margin: 0 auto; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--grey-line); }
+    .ci { padding: 26px 22px; border-right: 1px solid var(--grey-line); border-bottom: 1px solid var(--grey-line); transition: background 0.3s; }
+    .ci:hover { background: rgba(200,168,130,0.04); }
+    .ci:nth-child(2n) { border-right: none; }
+    .ci:nth-child(3), .ci:nth-child(4) { border-bottom: none; }
+    .ci-icon { font-size: 15px; margin-bottom: 7px; display: block; }
+    .ci-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--beige); margin-bottom: 4px; font-weight: 700; }
+    .ci-val { font-size: 13px; color: #bbb; text-decoration: none; transition: color 0.3s; }
+    .ci-val:hover { color: var(--cream); }
+    .email-cta { margin-top: 18px; padding: 22px 22px; border: 1px solid var(--grey-line); background: var(--black-soft); }
+    .email-cta p { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--beige); margin-bottom: 5px; font-weight: 700; }
+    .email-cta small { font-size: 12px; color: #777; line-height: 1.7; display: block; margin-bottom: 14px; }
+    .email-row { display: flex; gap: 0; }
+    .email-row input { flex: 1; background: var(--black); border: 1px solid var(--grey-line); border-right: none; padding: 12px 14px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; }
+    .email-row input::placeholder { color: #3a3a3a; }
+    .email-row button { background: var(--beige); color: var(--black); border: none; padding: 12px 20px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; font-weight: 700; transition: background 0.3s; }
+    .email-row button:hover { background: var(--beige-light); }
+
+    /* FOOTER */
+    footer { padding: 36px 56px; border-top: 1px solid var(--grey-line); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; letter-spacing: 0.22em; color: var(--cream); }
+    .footer-note { font-size: 12px; color: #666; text-align: center; line-height: 1.7; }
+    .footer-note span { color: var(--beige); }
+    .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+    .footer-links a { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #555; text-decoration: none; transition: color 0.3s; font-weight: 500; }
+    .footer-links a:hover { color: var(--beige); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes lineSlide { 0% { left: -100%; } 50% { left: 0; } 100% { left: 100%; } }
+
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      nav { padding: 18px 20px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 120px 20px 56px; }
+      .hero-right { height: 52vh; }
+      .sec-que-es, .sec-contacto, .mercado-grid, .fin-intro, .marketing-grid { grid-template-columns: 1fr; gap: 40px; }
+      .sec-que-es, .sec-features, .sec-roadmap, .sec-personas, .sec-mercado, .sec-financiero, .sec-modelo, .sec-marketing, .sec-contacto { padding: 72px 20px; }
+      .sec-valor, .sec-quote { padding: 72px 20px; }
+      .feature-cards, .modelo-cards, .roadmap-steps, .personas-grid { grid-template-columns: 1fr; }
+      .fc, .mc, .rs { border-right: none !important; border-bottom: 1px solid var(--grey-line); }
+      .features-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+      footer { flex-direction: column; text-align: center; gap: 14px; padding: 28px 20px; }
+      .stat-row { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--grey-line); }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .escalado-box { flex-direction: column; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="26" height="22" viewBox="0 0 26 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13 2C13 2,10.5 2,10.5 5.5C10.5 7.8,12 8.7,13 9" stroke="#c8a882" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M13 9 L3.5 20" stroke="#f0ebe1" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M13 9 L13 20" stroke="#f0ebe1" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M3.5 20 L13 13" stroke="#f0ebe1" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="1.5" y1="21" x2="24.5" y2="21" stroke="#c8a882" stroke-width="1" stroke-linecap="round"/>
+    </svg>
+    NUVA
+  </a>
+  <ul class="nav-links">
+    <li><a href="#que-es">La app</a></li>
+    <li><a href="#mercado">Mercado</a></li>
+    <li><a href="#marketing">Marketing</a></li>
+    <li><a href="#financiero">Financiero</a></li>
+    <li><a href="#roadmap">Hoja de ruta</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Próximamente</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Estilismo inteligente · IA personal · UV 2026</p>
+    <h1 class="hero-title">Tu outfit<br><em>perfecto</em><br>en segundos.</h1>
+    <p class="hero-subtitle">Menos estrés. Más confianza.</p>
+    <p class="hero-desc">NUVA transforma tu armario real en decisiones rápidas, inteligentes y con estilo. La IA que entiende tu ropa, tu agenda y tu vida.</p>
+    <div class="hero-actions">
+      <a href="#que-es" class="btn-primary">Descubrir NUVA</a>
+      <a href="#financiero" class="btn-ghost">Ver el modelo →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <svg class="hero-art-svg" width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="150" y1="0" x2="150" y2="62" stroke="#c8a882" stroke-width="1"/>
+      <path d="M150 62 C150 62,135 62,135 76 C135 85,144 92,150 94" stroke="#c8a882" stroke-width="1.5" fill="none"/>
+      <line x1="32" y1="118" x2="268" y2="118" stroke="#f0ebe1" stroke-width="1.5"/>
+      <line x1="32" y1="118" x2="32" y2="385" stroke="#444" stroke-width="1"/>
+      <line x1="102" y1="118" x2="102" y2="365" stroke="#444" stroke-width="1"/>
+      <line x1="198" y1="118" x2="198" y2="378" stroke="#444" stroke-width="1"/>
+      <line x1="268" y1="118" x2="268" y2="356" stroke="#444" stroke-width="1"/>
+      <rect x="16" y="135" width="32" height="204" rx="2" fill="#181818" stroke="#2a2a2a"/>
+      <rect x="86" y="135" width="32" height="182" rx="2" fill="#1c1814" stroke="#2a2a2a"/>
+      <rect x="182" y="135" width="32" height="212" rx="2" fill="#0e0e0e" stroke="#2a2a2a"/>
+      <rect x="252" y="135" width="32" height="192" rx="2" fill="#181818" stroke="#2a2a2a"/>
+    </svg>
+    <div class="hero-overlay-l"></div>
+    <div class="hero-quote-block">
+      <p>"Abrir el armario debería dar<br>calma, no estrés."</p>
+    </div>
+    <span class="hero-vertical">Estilismo · IA · Confianza · 2026</span>
+  </div>
+  <div class="scroll-cue">
+    <div class="scroll-line"></div>
+    Descubre más
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="m-dot"></span>Armario Digital</div>
+    <div class="marquee-item"><span class="m-dot"></span>IA Personalizada</div>
+    <div class="marquee-item"><span class="m-dot"></span>Outfits en 60 segundos</div>
+    <div class="marquee-item"><span class="m-dot"></span>Tu ropa · Tu estilo</div>
+    <div class="marquee-item"><span class="m-dot"></span>Estilismo inteligente</div>
+    <div class="marquee-item"><span class="m-dot"></span>Disponible en 2026</div>
+    <div class="marquee-item"><span class="m-dot"></span>Universitat de València</div>
+    <div class="marquee-item"><span class="m-dot"></span>Armario Digital</div>
+    <div class="marquee-item"><span class="m-dot"></span>IA Personalizada</div>
+    <div class="marquee-item"><span class="m-dot"></span>Outfits en 60 segundos</div>
+    <div class="marquee-item"><span class="m-dot"></span>Tu ropa · Tu estilo</div>
+    <div class="marquee-item"><span class="m-dot"></span>Estilismo inteligente</div>
+    <div class="marquee-item"><span class="m-dot"></span>Disponible en 2026</div>
+    <div class="marquee-item"><span class="m-dot"></span>Universitat de València</div>
+  </div>
+</div>
+
+<!-- QUÉ ES NUVA -->
+<section class="sec-que-es" id="que-es">
+  <div class="reveal">
+    <p class="section-label">¿Qué es NUVA?</p>
+    <h2 class="section-heading">Una app que resuelve<br>tu mañana <em>cada día.</em></h2>
+    <p class="section-body">NUVA es una app de estilismo inteligente que genera outfits personalizados utilizando la ropa real del usuario. No vende únicamente moda, sino <strong style="color:var(--cream)">tranquilidad, rapidez, seguridad y confianza.</strong></p>
+    <p class="section-body">La propuesta de valor se centra en transformar un armario real en decisiones fáciles y rápidas mediante IA, inspiración práctica y personalización total.</p>
+    <div class="feature-grid">
+      <div class="fp"><span class="fp-icon">🌤</span><p class="fp-title">Clima</p><p class="fp-desc">Outfits adaptados al tiempo real del día</p></div>
+      <div class="fp"><span class="fp-icon">📅</span><p class="fp-title">Ocasión</p><p class="fp-desc">Trabajo, evento, casual o cita</p></div>
+      <div class="fp"><span class="fp-icon">✨</span><p class="fp-title">Estilo personal</p><p class="fp-desc">La IA aprende y mejora contigo</p></div>
+      <div class="fp"><span class="fp-icon">🗓</span><p class="fp-title">Agenda del día</p><p class="fp-desc">Conectada a tu calendario diario</p></div>
+    </div>
+  </div>
+  <div class="statement-block reveal">
+    <div class="ghost-text">IA</div>
+    <blockquote class="big-quote">
+      NUVA elimina el tiempo perdido, las dudas y la frustración de elegir outfit cada mañana.<br><br>
+      <span>Tu armario siempre tuvo todo lo que necesitabas.</span>
+    </blockquote>
+    <div class="stat-row">
+      <div class="stat-item"><span class="stat-num">30'</span><span class="stat-lbl">Ahorrados al día</span></div>
+      <div class="stat-item"><span class="stat-num">1'</span><span class="stat-lbl">Para tu look</span></div>
+      <div class="stat-item"><span class="stat-num">100%</span><span class="stat-lbl">Tu ropa real</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPUESTA VALOR -->
+<section class="sec-valor">
+  <div class="reveal">
+    <h2 class="valor-big">No solo organiza tu armario.<br>Organiza <em>tus decisiones.</em></h2>
+    <p class="diferenciador">"NUVA no organiza solo tu armario. Organiza tus decisiones."</p>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section class="sec-features" id="funcionalidades">
+  <div class="features-header reveal">
+    <div>
+      <p class="section-label">La app</p>
+      <h2 class="section-heading">Diseñada para<br>tu rutina diaria.</h2>
+    </div>
+    <p>6 funcionalidades para que elegir outfit sea rápido, agradable y sin estrés.</p>
+  </div>
+  <div class="feature-cards reveal">
+    <div class="fc"><span class="fc-num">01</span><h3 class="fc-title">Onboarding & Perfil de estilo</h3><p class="fc-desc">La app aprende quién eres, cómo vistes y qué necesitas en menos de 3 minutos.</p><span class="fc-tag">Inicio</span></div>
+    <div class="fc"><span class="fc-num">02</span><h3 class="fc-title">Armario Digital "Mi Armario"</h3><p class="fc-desc">Escanea y digitaliza tu ropa con la cámara. Organizado y accesible desde cualquier lugar.</p><span class="fc-tag">Organización</span></div>
+    <div class="fc"><span class="fc-num">03</span><h3 class="fc-title">Crear Look — IA</h3><p class="fc-desc">La función principal. La IA combina prendas de tu armario según clima, ocasión y agenda. Resultado en segundos.</p><span class="fc-tag">Core Feature</span></div>
+    <div class="fc"><span class="fc-num">04</span><h3 class="fc-title">Inspiración Aplicada</h3><p class="fc-desc">Tendencias de TikTok e Instagram reinterpretadas con tu ropa real. Inspiración que sí puedes replicar.</p><span class="fc-tag">Inspiración</span></div>
+    <div class="fc"><span class="fc-num">05</span><h3 class="fc-title">Chat IA — Asistente de Estilo</h3><p class="fc-desc">Tu estilista personal 24/7. Resuelve dudas, sugiere combinaciones y aprende de tus preferencias.</p><span class="fc-tag">IA Conversacional</span></div>
+    <div class="fc"><span class="fc-num">06</span><h3 class="fc-title">Looks Guardados</h3><p class="fc-desc">Guarda tus outfits favoritos con estadísticas de uso, fecha y ocasión. Tu historial de estilo siempre disponible.</p><span class="fc-tag">Historial</span></div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="sec-quote">
+  <div class="qbg">NUVA</div>
+  <blockquote class="qt reveal">"Abre tu armario.<br>Sal con <strong>confianza.</strong>"</blockquote>
+  <div class="qt-div"></div>
+</section>
+
+<!-- ESTUDIO DE MERCADO -->
+<section class="sec-mercado" id="mercado">
+  <div class="mercado-inner">
+    <div class="reveal">
+      <p class="section-label">Estudio de mercado</p>
+      <h2 class="section-heading">El problema existe.<br>El mercado <em>lo confirma.</em></h2>
+    </div>
+    <div class="mercado-grid reveal">
+      <div>
+        <div class="insight-block">
+          <h3 class="insight-title">¿Qué hace el usuario hoy?</h3>
+          <ul class="insight-list">
+            <li>Llama a sus amigas para saber qué ponerse</li>
+            <li>Busca inspiración en Pinterest y TikTok pero no la replica</li>
+            <li>Se cambia varias veces antes de salir</li>
+            <li>Pide validación por WhatsApp</li>
+            <li>Compra por impulso prendas que luego no usa</li>
+          </ul>
+        </div>
+        <div class="insight-block">
+          <h3 class="insight-title">Insight clave</h3>
+          <ul class="insight-list">
+            <li>No es falta de ropa — es <strong style="color:var(--cream)">falta de claridad y confianza</strong></li>
+            <li>Las usuarias pierden 15–40 minutos al día eligiendo outfit</li>
+            <li>El mercado actual ofrece demasiado "tooling" y poco "resultado"</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--beige);font-weight:700;margin-bottom:18px;">Segmentos conductuales</p>
+        <div class="segments-grid">
+          <div class="seg-card"><span class="seg-emoji">⚡</span><p class="seg-title">Las que van con prisa</p><p class="seg-desc">Poco tiempo. Odian cambiarse varias veces. Quieren decidir en segundos.</p><p class="seg-need">Necesitan: decisión inmediata</p></div>
+          <div class="seg-card"><span class="seg-emoji">🤔</span><p class="seg-title">Las inseguras</p><p class="seg-desc">Dudan si el outfit es adecuado. Buscan validación externa.</p><p class="seg-need">Necesitan: confianza + validación</p></div>
+          <div class="seg-card"><span class="seg-emoji">📱</span><p class="seg-title">Las aspiracionales</p><p class="seg-desc">Consumen moda en TikTok e IG. No saben adaptar looks a su armario real.</p><p class="seg-need">Necesitan: traducir inspiración en realidad</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competidores -->
+    <div class="reveal" style="margin-top:56px;">
+      <p class="section-label">Análisis competitivo</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);margin-bottom:28px;">¿Con quién <em style="color:var(--beige);font-style:italic;">competimos?</em></h3>
+      <div class="comp-table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>App</th><th>IA útil</th><th>Planner</th><th>Social</th><th>Estilista</th><th>Simplicidad</th><th>Enfoque</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="nuva-row">
+              <td>NUVA ✦</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>IA + planner + social + simplicidad</td>
+            </tr>
+            <tr><td>ACloset</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td>IA / automatización</td></tr>
+            <tr><td>Whering</td><td><span class="half">~</span></td><td><span class="check">✓</span></td><td><span class="half">~</span></td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td>Planificación de outfits</td></tr>
+            <tr><td>Indyx</td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td>Servicio premium humano</td></tr>
+            <tr><td>Stylebook</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td>Planificación clásica</td></tr>
+            <tr><td>Smart Closet</td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="half">~</span></td><td>Social / inspiración</td></tr>
+            <tr><td>Fits</td><td><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Simple, IA básica</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="oportunidad-box">
+        <p>"Una app que combine <span>IA + planner + social + simplicidad.</span> Muchas intentan. Pocas lo hacen bien. Ese es el hueco que ocupa NUVA."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING -->
+<section class="sec-marketing" id="marketing">
+  <div class="reveal">
+    <p class="section-label">Estrategia de marketing</p>
+    <h2 class="section-heading">Llegar donde<br>ya está <em>nuestro público.</em></h2>
+  </div>
+  <div class="marketing-grid reveal">
+    <div class="mk-block">
+      <p class="mk-block-title">Canales principales</p>
+      <ul class="mk-list">
+        <li><strong>TikTok, Instagram & Pinterest</strong> — Donde el público ya busca inspiración de moda. Vídeos cortos y contenido visual.</li>
+        <li><strong>Microinfluencers de moda</strong> — Perfiles de Valencia y ciudades similares con uso real de la app.</li>
+        <li><strong>Email marketing & CRM</strong> — Notificaciones: looks según el tiempo, recordatorios, ofertas Premium.</li>
+        <li><strong>App Store & Google Play</strong> — Posicionamiento ASO y campañas de descarga.</li>
+      </ul>
+    </div>
+    <div class="mk-block">
+      <p class="mk-block-title">Acciones de lanzamiento</p>
+      <ul class="mk-list">
+        <li><strong>Premium gratuito 30 días</strong> para las primeras usuarias que se registren.</li>
+        <li><strong>Reto "7 prendas, 7 looks"</strong> — Viral y demostrativo del valor real de la app.</li>
+        <li><strong>Descuento para estudiantes</strong> y referidos: invita a una amiga, ambas ganan días Premium.</li>
+        <li><strong>Contenido orgánico:</strong> "un look en 1 minuto", "qué ponerse para cenar", "aprovecha tu armario".</li>
+      </ul>
+    </div>
+    <div class="mk-block">
+      <p class="mk-block-title">Relación con la clienta</p>
+      <ul class="mk-list">
+        <li>Notificaciones personalizadas por clima, agenda y prendas sin usar.</li>
+        <li>Soporte bajo demanda para problemas técnicos o de uso.</li>
+        <li>Emails de estilo semanales con consejos y nuevas funciones.</li>
+        <li>Fomento de la conversión Free → Premium con demos in-app.</li>
+      </ul>
+    </div>
+    <div class="mk-block">
+      <p class="mk-block-title">Estrategia freemium</p>
+      <ul class="mk-list">
+        <li><strong>Versión gratuita:</strong> perfil, armario básico, 3 outfits/día, hasta 10 looks guardados.</li>
+        <li><strong>Versión Premium:</strong> outfits ilimitados, chat IA, estadísticas, estilistas, escaneo rápido.</li>
+        <li>Probar sin riesgo y pagar solo si ven valor real en la app.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="kpi-grid reveal">
+    <div class="kpi-item"><p class="kpi-label">KPI Principal</p><p class="kpi-value">Descargas y tasa de conversión Free → Premium</p></div>
+    <div class="kpi-item"><p class="kpi-label">Activación</p><p class="kpi-value">% de usuarias que completan el registro y añaden prendas</p></div>
+    <div class="kpi-item"><p class="kpi-label">Engagement</p><p class="kpi-value">Looks creados por semana y retención mensual activa</p></div>
+    <div class="kpi-item"><p class="kpi-label">Monetización</p><p class="kpi-value">Ventas generadas desde la app y clics a tiendas asociadas</p></div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section class="sec-personas">
+  <div class="reveal">
+    <p class="section-label">Usuarias objetivo</p>
+    <h2 class="section-heading">Diseñada para<br>mujeres <em>reales.</em></h2>
+  </div>
+  <div class="personas-grid">
+    <div class="pcard reveal"><div class="pinitial">A</div><h3 class="pname">Ana, 31</h3><p class="page">Administración · Estudiante de Derecho</p><p class="pdesc">Agenda cargada, vive sola. Poco tiempo pero valora mucho su imagen. Busca verse cuidada sin esfuerzo extra.</p><div class="ptags"><span class="ptag">Imagen</span><span class="ptag">Sin esfuerzo</span><span class="ptag">Eficiencia</span></div></div>
+    <div class="pcard reveal" style="transition-delay:0.12s"><div class="pinitial">C</div><h3 class="pname">Cristina, 35</h3><p class="page">Coordinadora de Enfermería</p><p class="pdesc">Menos tiempo para ella. Valora comodidad, ahorro de tiempo y soluciones simples. Prioriza pareja y trabajo.</p><div class="ptags"><span class="ptag">Comodidad</span><span class="ptag">Ahorro tiempo</span><span class="ptag">Simple</span></div></div>
+    <div class="pcard reveal" style="transition-delay:0.24s"><div class="pinitial">L</div><h3 class="pname">Laura, 28</h3><p class="page">Valencia · Estudia y trabaja</p><p class="pdesc">Nuestra usuaria principal. Activa, social, conectada. Guarda looks en Instagram pero no sabe cómo replicarlos.</p><div class="ptags"><span class="ptag">Estética</span><span class="ptag">Inspiración</span><span class="ptag">Novedad</span></div></div>
+  </div>
+</section>
+
+<!-- FINANCIERO -->
+<section class="sec-financiero" id="financiero">
+  <div class="financiero-inner">
+    <div class="reveal">
+      <p class="section-label">Análisis financiero</p>
+      <h2 class="section-heading">Estrategia de monetización<br>y <em>previsión de ingresos.</em></h2>
+      <p class="section-body" style="max-width:680px;">Modelo de ingresos triple que maximiza el valor de cada usuario activo, apoyándose en el alto valor añadido de nuestras funciones exclusivas.</p>
+    </div>
+    <div class="fin-intro reveal">
+      <div class="rev-streams">
+        <div class="rev-card">
+          <div class="rev-num">1</div>
+          <span class="rev-badge">Principal</span>
+          <h3 class="rev-title">Suscripción Premium</h3>
+          <p class="rev-desc">Motor principal de rentabilidad. Alta tasa de conversión gracias al probador virtual y el organizador inteligente.</p>
+          <div class="rev-highlight">9,90 € / mes · 20% conversión estimada · 1.980 € por cada 1.000 usuarios</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-num">2</div>
+          <span class="rev-badge alt">Complementario</span>
+          <h3 class="rev-title">Publicidad Segmentada</h3>
+          <p class="rev-desc">Conocimiento del estilo de la usuaria para ofrecer anuncios relevantes y no intrusivos.</p>
+          <div class="rev-highlight">15 € CPM · 3 impactos/mes por usuario · 45 € por cada 1.000 usuarios</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-num">3</div>
+          <span class="rev-badge alt">B2B</span>
+          <h3 class="rev-title">Afiliación & Tiendas</h3>
+          <p class="rev-desc">Conexión directa entre inspiración y compra. Listing fee mensual más comisión por venta.</p>
+          <div class="rev-highlight">50 €/mes listing fee · 5% comisión CPA · 300 € por cada 1.000 usuarios</div>
+        </div>
+      </div>
+      <div>
+        <div class="fin-table-wrap">
+          <h3 class="fin-table-title">Síntesis: potencial por cada <span style="color:var(--beige)">1.000 usuarios</span></h3>
+          <table class="fin-table">
+            <thead><tr><th>Fuente de ingresos</th><th>Detalle del cálculo</th><th>Ingreso estimado</th></tr></thead>
+            <tbody>
+              <tr><td>Suscripción Premium (9,90 €)</td><td>200 abonados — tasa del 20%</td><td>1.980 €</td></tr>
+              <tr><td>Publicidad Segmentada</td><td>3 slots a 15 € CPM</td><td>45 €</td></tr>
+              <tr><td>Afiliación (5% CPA)</td><td>100 ventas · ticket medio 60 €</td><td>300 €</td></tr>
+              <tr><td colspan="2"><strong>TOTAL MENSUAL</strong> — por cada 1.000 usuarios</td><td>2.325 €</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="escalado-box">
+          <div class="esc-metric"><span class="esc-num">100K</span><span class="esc-lbl">Usuarios</span></div>
+          <div class="esc-metric"><span class="esc-num" style="font-size:28px;">→</span></div>
+          <div class="esc-metric"><span class="esc-num">232.500 €</span><span class="esc-lbl">Al mes</span></div>
+          <p class="esc-note">Al alcanzar los <strong>100.000 usuarios</strong>, este modelo genera <strong>232.500 € mensuales</strong>. La escalabilidad digital permite crecer sin incrementar proporcionalmente los costes operativos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELO DE NEGOCIO -->
+<section class="sec-modelo" id="modelo">
+  <div class="modelo-inner">
+    <div class="reveal">
+      <p class="section-label">Modelo de negocio</p>
+      <h2 class="section-heading">Tres niveles.<br>Un mismo <em>objetivo.</em></h2>
+    </div>
+    <div class="modelo-cards reveal">
+      <div class="mc">
+        <span class="mc-badge">Gratis</span>
+        <div class="mc-price">Free</div>
+        <p class="mc-note">Para siempre · acceso básico</p>
+        <ul class="mc-list">
+          <li>Armario digital básico</li>
+          <li>3 outfits generados por día</li>
+          <li>Acceso a inspiración</li>
+          <li>Looks guardados (hasta 10)</li>
+        </ul>
+      </div>
+      <div class="mc">
+        <span class="mc-badge">Premium</span>
+        <div class="mc-price">9<span style="font-size:22px;color:#555">,90 €</span></div>
+        <p class="mc-note">al mes · suscripción mensual</p>
+        <ul class="mc-list">
+          <li>Outfits ilimitados con IA</li>
+          <li>Chat IA estilista 24/7</li>
+          <li>Inspiración aplicada a tu armario</li>
+          <li>Estadísticas de uso detalladas</li>
+          <li>Acceso a estilistas afiliados</li>
+          <li>Escaneo rápido de prendas</li>
+        </ul>
+      </div>
+      <div class="mc">
+        <span class="mc-badge alt">B2B</span>
+        <div class="mc-price" style="font-size:32px;margin-top:8px;line-height:1.2;">Marcas<br>&amp; Tiendas</div>
+        <p class="mc-note">cuota fija + comisión por venta</p>
+        <ul class="mc-list">
+          <li>Catálogo en la app (50 €/mes)</li>
+          <li>Recomendaciones IA a usuarias</li>
+          <li>5% comisión CPA por venta</li>
+          <li>Integración con Vinted (reventa)</li>
+          <li>Estilistas afiliados por comisión</li>
+          <li>Analítica de tendencias</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="sec-roadmap" id="roadmap">
+  <div class="reveal">
+    <p class="section-label">Próximos pasos</p>
+    <h2 class="section-heading">Hoja de ruta<br>de <em>implementación.</em></h2>
+  </div>
+  <div class="roadmap-steps reveal">
+    <div class="rs"><p class="rs-step">Fase 01</p><h3 class="rs-title">Validación del problema</h3><p class="rs-desc">Análisis con usuarias reales. Experimento de digitalización con 7 prendas. Medir facilidad, tiempo y disposición a pagar.</p><p class="rs-tag">En curso · 2025</p></div>
+    <div class="rs"><p class="rs-step">Fase 02</p><h3 class="rs-title">MVP — Mínimo viable</h3><p class="rs-desc">Registro, perfil, armario digital, generación básica de looks y guardado de outfits. Solo funciones esenciales.</p><p class="rs-tag">Q1 · 2026</p></div>
+    <div class="rs"><p class="rs-step">Fase 03</p><h3 class="rs-title">Beta privada</h3><p class="rs-desc">Versión beta para grupo reducido. Recogida de feedback y mejora de UX antes del lanzamiento público.</p><p class="rs-tag">Q2 · 2026</p></div>
+    <div class="rs"><p class="rs-step">Fase 04</p><h3 class="rs-title">Ajuste & Premium</h3><p class="rs-desc">Refinamiento del diseño, ajuste del modelo Premium y primeras alianzas con marcas y estilistas afiliados.</p><p class="rs-tag">Q3 · 2026</p></div>
+    <div class="rs"><p class="rs-step">Fase 05</p><h3 class="rs-title">Lanzamiento público</h3><p class="rs-desc">App en App Store y Google Play. Campaña en redes, colaboraciones con influencers y periodo Premium gratuito.</p><p class="rs-tag">Q4 · 2026</p></div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="sec-contacto" id="contacto">
+  <div class="reveal">
+    <p class="section-label">Contacto</p>
+    <h2 class="section-heading">Hablemos<br>de <em>NUVA.</em></h2>
+    <p class="section-body">NUVA está en desarrollo en 2026 por un equipo de estudiantes de la <strong style="color:var(--cream)">Universitat de València</strong>. Si eres inversora, marca o quieres saber más, escríbenos.</p>
+    <p style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--beige);margin-top:24px;font-weight:700;">Proyecto académico UV · 2026</p>
+  </div>
+  <div class="reveal" style="transition-delay:0.15s">
+    <div class="contact-grid">
+      <div class="ci"><span class="ci-icon">🌐</span><p class="ci-label">Web</p><a href="#" class="ci-val">www.nuvaapp.com</a></div>
+      <div class="ci"><span class="ci-icon">✉️</span><p class="ci-label">Email</p><a href="mailto:hola@nuvaapp.com" class="ci-val">hola@nuvaapp.com</a></div>
+      <div class="ci"><span class="ci-icon">📞</span><p class="ci-label">Teléfono</p><a href="tel:+34960123456" class="ci-val">+34 960 123 456</a></div>
+      <div class="ci"><span class="ci-icon">💼</span><p class="ci-label">LinkedIn</p><a href="#" class="ci-val">linkedin.com/company/nuvaapp</a></div>
+    </div>
+    <div class="email-cta">
+      <p>Sé la primera en acceder</p>
+      <small>Deja tu email y te avisamos cuando NUVA esté disponible en tu tienda de apps.</small>
+      <div class="email-row">
+        <input type="email" placeholder="tu@email.com" />
+        <button>Avisar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">NUVA</span>
+  <div class="footer-note">Desarrollado en 2026 por estudiantes de la <span>Universitat de València</span><br>Proyecto de innovación en moda y tecnología · UV · España</div>
+  <div class="footer-links">
+    <a href="#">Privacidad</a>
+    <a href="#">Términos</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.07, rootMargin: '0px 0px -48px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  const secs = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+    links.forEach(l => { l.style.color = l.getAttribute('href') === '#' + cur ? 'var(--beige)' : ''; });
+  });
+</script>
+</body>
+</html>
